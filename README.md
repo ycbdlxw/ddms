@@ -17,21 +17,25 @@ A configuration-driven dynamic data management system built with Spring Boot tha
 ## Key Features | 核心特性
 
 ### 🚀 Dynamic Data Operations | 动态数据操作
+
 - **Generic CRUD Operations** | **通用CRUD操作**: Support for any database table without code changes | 支持任意数据库表的无代码变更操作
 - **Dynamic Query Building** | **动态查询构建**: Flexible WHERE clause generation with pagination | 灵活的WHERE条件生成和分页支持
 - **Configuration-Driven** | **配置驱动**: Table operations controlled by configuration files | 通过配置文件控制表操作
 
 ### 🔒 Security Framework | 安全框架
+
 - **JWT Authentication** | **JWT认证**: Stateless token-based authentication | 无状态令牌认证
 - **Role-Based Access Control** | **基于角色的访问控制**: Fine-grained permission management | 细粒度权限管理
 - **ThreadLocal Context** | **ThreadLocal上下文**: Secure user context management | 安全的用户上下文管理
 
 ### ✅ Validation System | 验证系统
+
 - **Dual-Layer Validation** | **双层验证**: Attribute validation + Business rule validation | 属性验证 + 业务规则验证
 - **Custom Validators** | **自定义验证器**: Extensible validation framework | 可扩展的验证框架
 - **Dynamic Rules** | **动态规则**: Database-driven validation rules | 数据库驱动的验证规则
 
 ### 🧪 Automated Testing Service | 自动化测试服务 ⭐
+
 - **Script-Driven Testing** | **脚本驱动测试**: Execute curl commands from shell scripts | 执行shell脚本中的curl命令
 - **Token Management** | **令牌管理**: Automatic login and token extraction | 自动登录和令牌提取
 - **Real-time Execution** | **实时执行**: Live test execution with immediate feedback | 实时测试执行和即时反馈
@@ -75,22 +79,23 @@ A configuration-driven dynamic data management system built with Spring Boot tha
 
 ```mermaid
 graph TD
-    A[Client Request | 客户端请求] --> B[JWT Interceptor | JWT拦截器]
-    B --> C{Token Validation | 令牌验证}
-    C -->|Valid | 有效| D[Controller Layer | 控制层]
-    C -->|Invalid | 无效| E[Return 401 | 返回401]
-    D --> F[Common Service | 通用服务]
-    F --> G[Data Validator | 数据验证器]
-    G --> H[Attribute Validator | 属性验证器]
-    G --> I[Rule Validator | 规则验证器]
-    F --> J[Base Service | 基础服务]
-    J --> K[MyBatis Mapper | MyBatis映射器]
-    K --> L[(Database | 数据库)]
+    A["Client Request - 客户端请求"] --> B["JWT Issued - JWT 签发"]
+    B --> C["Token Validation - 令牌验证"]
+    C -->|Valid| D["Controller Layer - 控制层"]
+    C -->|Invalid| E["Return 401 - 返回401"]
+    D --> F["Common Service - 通用服务"]
+    F --> G["Data Validator - 数据验证器"]
+    G --> H["Attribute Validator - 属性验证器"]
+    G --> I["Rule Validator - 规则验证器"]
+    F --> J["Base Service - 基础服务"]
+    J --> K["MyBatis Mapper - MyBatis 映射器"]
+    K --> L[("Database - 数据库")]
 ```
 
 ## Technology Stack | 技术栈
 
 ### Backend | 后端技术
+
 - **Framework | 框架**: Spring Boot 3.x
 - **Security | 安全**: JWT + Spring Security
 - **Database Access | 数据库访问**: MyBatis 3.x
@@ -100,6 +105,7 @@ graph TD
 - **Utilities | 工具库**: Hutool, Jackson
 
 ### Development Tools | 开发工具
+
 - **IDE**: IntelliJ IDEA / VS Code
 - **Version Control | 版本控制**: Git
 - **API Testing | API测试**: Postman / Swagger
@@ -110,12 +116,14 @@ graph TD
 ### Prerequisites | 环境要求
 
 **English:**
+
 - JDK 17 or higher
 - Maven 3.8 or higher
 - MySQL 8.0 or higher
 - Git (for version control)
 
 **中文:**
+
 - JDK 17 或更高版本
 - Maven 3.8 或更高版本
 - MySQL 8.0 或更高版本
@@ -124,41 +132,42 @@ graph TD
 ### Installation | 安装步骤
 
 1. **Clone Repository | 克隆仓库**
+
    ```bash
    git clone <repository-url>
    cd demo
    ```
-
 2. **Database Setup | 数据库设置**
+
    ```sql
    CREATE DATABASE demo_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
-
 3. **Configuration | 配置文件**
-   
+
    Edit `src/main/resources/application.yml` | 编辑配置文件:
+
    ```yaml
    spring:
      datasource:
        url: jdbc:mysql://localhost:3306/demo_db
        username: your_username
        password: your_password
-   
+
    jwt:
      secret: your_jwt_secret_key
      expiration: 86400000
    ```
-
 4. **Build and Run | 构建和运行**
+
    ```bash
    # Build project | 构建项目
    mvn clean compile
-   
+
    # Run application | 运行应用
    mvn spring-boot:run
    ```
-
 5. **Access Application | 访问应用**
+
    - Application URL | 应用地址: `http://localhost:8080`
    - API Base URL | API基础地址: `http://localhost:8080/api`
 
@@ -167,6 +176,7 @@ graph TD
 ### Authentication | 认证接口
 
 #### User Login | 用户登录
+
 ```http
 POST /api/common/login
 Content-Type: application/json
@@ -178,6 +188,7 @@ Content-Type: application/json
 ```
 
 **Response | 响应:**
+
 ```json
 {
   "code": 200,
@@ -195,12 +206,14 @@ Content-Type: application/json
 ### CRUD Operations | CRUD操作
 
 #### List Data | 查询列表
+
 ```http
 GET /api/common/list?table=users&page=1&size=10
 Authorization: Bearer <token>
 ```
 
 #### Save Single Record | 单记录保存
+
 ```http
 POST /api/common/save
 Authorization: Bearer <token>
@@ -217,6 +230,7 @@ Content-Type: application/json
 ```
 
 **Response | 响应:**
+
 ```json
 {
   "code": 200,
@@ -229,6 +243,7 @@ Content-Type: application/json
 ```
 
 #### Batch Save | 批量保存
+
 ```http
 POST /api/common/batchSave
 Authorization: Bearer <token>
@@ -250,6 +265,7 @@ Content-Type: application/json
 ```
 
 **Response | 响应:**
+
 ```json
 {
   "code": 200,
@@ -262,12 +278,14 @@ Content-Type: application/json
 ```
 
 #### Get Single Record | 获取单条记录
+
 ```http
 GET /api/common/detail?table=users&id=1
 Authorization: Bearer <token>
 ```
 
 **Response | 响应:**
+
 ```json
 {
   "code": 200,
@@ -282,12 +300,14 @@ Authorization: Bearer <token>
 ```
 
 #### Query List Data | 查询列表数据
+
 ```http
 GET /api/common/list?table=users&page=1&size=10&username=admin
 Authorization: Bearer <token>
 ```
 
 **Response | 响应:**
+
 ```json
 {
   "code": 200,
@@ -309,6 +329,7 @@ Authorization: Bearer <token>
 ```
 
 #### Delete Data | 删除数据
+
 ```http
 DELETE /api/common/delete?table=users&id=1
 Authorization: Bearer <token>
@@ -322,6 +343,7 @@ Authorization: Bearer <token>
 The system features a powerful built-in automated testing service with script-driven API testing as a core highlight.
 
 #### Execute Test Script | 执行测试脚本
+
 ```http
 POST /api/test/run
 Authorization: Bearer <token>
@@ -335,6 +357,7 @@ Content-Type: application/json
 ```
 
 **Response | 响应:**
+
 ```json
 {
   "code": 200,
@@ -368,6 +391,7 @@ Content-Type: application/json
 #### Test Script Example | 测试脚本示例
 
 **Security Test Script | 安全测试脚本** (`security_test.sh`):
+
 ```bash
 #!/bin/bash
 
@@ -435,24 +459,28 @@ curl -X POST 'http://localhost:8080/api/common/save' \
 #### Key Testing Capabilities | 核心测试能力
 
 **🔒 Security Testing | 安全测试**
+
 - SQL注入防护验证
 - XSS攻击防护测试
 - 权限控制验证
 - 数据加密验证
 
 **📊 Performance Testing | 性能测试**
+
 - 响应时间监控
 - 并发请求测试
 - 数据库连接池测试
 - 内存使用监控
 
 **✅ Functional Testing | 功能测试**
+
 - 完整CRUD流程验证
 - 数据验证规则测试
 - 业务逻辑验证
 - 异常处理测试
 
 **📈 Test Analytics | 测试分析**
+
 - 自动生成测试报告
 - 测试覆盖率统计
 - 失败原因分析
@@ -501,6 +529,7 @@ jwt:
 ### Adding New Features | 添加新功能
 
 **English:**
+
 1. Create new controller extending base functionality
 2. Implement custom business logic in service layer
 3. Add custom validators if needed
@@ -508,6 +537,7 @@ jwt:
 5. Write unit tests
 
 **中文:**
+
 1. 创建继承基础功能的新控制器
 2. 在服务层实现自定义业务逻辑
 3. 根据需要添加自定义验证器
@@ -519,7 +549,7 @@ jwt:
 ```java
 @Component
 public class CustomValidator implements RuleValidator {
-    
+  
     @Override
     public ValidationResult validate(String table, Map<String, Object> data) {
         // Implement custom validation logic
@@ -532,12 +562,14 @@ public class CustomValidator implements RuleValidator {
 ### Security Best Practices | 安全最佳实践
 
 **English:**
+
 - Always validate JWT tokens in protected endpoints
 - Use role-based access control for sensitive operations
 - Implement proper error handling without exposing system details
 - Use HTTPS in production environments
 
 **中文:**
+
 - 在受保护的端点中始终验证JWT令牌
 - 对敏感操作使用基于角色的访问控制
 - 实现适当的错误处理，不暴露系统细节
@@ -555,30 +587,31 @@ The system provides enterprise-level automated testing services with comprehensi
 #### Quick Start | 快速开始
 
 1. **Create Test Script | 创建测试脚本**
+
    ```bash
    # 创建测试脚本文件
    mkdir -p src/main/resources/test
    touch src/main/resources/test/my_test.sh
    chmod +x src/main/resources/test/my_test.sh
    ```
-
 2. **Write Test Cases | 编写测试用例**
+
    ```bash
    #!/bin/bash
-   
+
    # 用户登录测试
    curl -X POST 'http://localhost:8080/api/common/login' \
      -H 'Content-Type: application/json' \
      -d '{"username":"admin","password":"123456"}'
-   
+
    # 数据保存测试
    curl -X POST 'http://localhost:8080/api/common/save' \
      -H 'Authorization: Bearer your-token-here' \
      -H 'Content-Type: application/json' \
      -d '{"table":"users","data":{"username":"testuser"}}'
    ```
-
 3. **Execute Tests | 执行测试**
+
    ```bash
    curl -X POST 'http://localhost:8080/api/test/run' \
      -H 'Authorization: Bearer <your-token>' \
@@ -589,6 +622,7 @@ The system provides enterprise-level automated testing services with comprehensi
 #### Advanced Test Scenarios | 高级测试场景
 
 **🔒 Security Testing | 安全测试**
+
 ```bash
 # SQL注入防护测试
 curl -X POST 'http://localhost:8080/api/common/login' \
@@ -607,6 +641,7 @@ curl -X GET 'http://localhost:8080/api/common/list?table=users' \
 ```
 
 **📊 Performance Testing | 性能测试**
+
 ```bash
 # 批量数据保存性能测试
 for i in {1..100}; do
@@ -625,6 +660,7 @@ wait
 ```
 
 **✅ Complete CRUD Testing | 完整CRUD测试**
+
 ```bash
 #!/bin/bash
 
@@ -678,6 +714,7 @@ The system automatically generates detailed test reports including:
 - **趋势分析** | **Trend Analysis**: 历史对比、性能趋势
 
 **Sample Test Report | 测试报告示例**
+
 ```
 === 自动化测试报告 ===
 项目: Dynamic Data Management System
@@ -717,6 +754,7 @@ The system automatically generates detailed test reports including:
 ### Traditional Testing | 传统测试
 
 #### Unit Tests | 单元测试
+
 ```bash
 # Run all tests | 运行所有测试
 mvn test
@@ -729,6 +767,7 @@ mvn test jacoco:report
 ```
 
 #### Test Categories | 测试分类
+
 - **Unit Tests | 单元测试**: Test individual components | 测试单个组件
 - **Integration Tests | 集成测试**: Test component interactions | 测试组件交互
 - **API Tests | API测试**: Test REST endpoints | 测试REST端点
@@ -739,11 +778,12 @@ mvn test jacoco:report
 ### Docker Deployment | Docker部署
 
 1. **Build Docker Image | 构建Docker镜像**
+
    ```bash
    docker build -t demo-app:latest .
    ```
-
 2. **Run Container | 运行容器**
+
    ```bash
    docker run -d \
      --name demo-app \
@@ -757,6 +797,7 @@ mvn test jacoco:report
 ### Production Deployment | 生产部署
 
 **English:**
+
 1. Set up production database
 2. Configure environment variables
 3. Build production JAR file
@@ -765,6 +806,7 @@ mvn test jacoco:report
 6. Set up monitoring and logging
 
 **中文:**
+
 1. 设置生产数据库
 2. 配置环境变量
 3. 构建生产JAR文件
@@ -775,11 +817,13 @@ mvn test jacoco:report
 ## Performance Optimization | 性能优化
 
 ### Database Optimization | 数据库优化
+
 - **Indexing | 索引**: Create appropriate indexes for frequently queried columns
 - **Connection Pooling | 连接池**: Configure HikariCP for optimal performance
 - **Query Optimization | 查询优化**: Use efficient SQL queries and avoid N+1 problems
 
 ### Application Optimization | 应用优化
+
 - **Caching | 缓存**: Implement Redis for frequently accessed data
 - **Async Processing | 异步处理**: Use @Async for long-running operations
 - **JVM Tuning | JVM调优**: Optimize garbage collection and memory settings
@@ -787,11 +831,13 @@ mvn test jacoco:report
 ## Monitoring and Logging | 监控和日志
 
 ### Application Monitoring | 应用监控
+
 - **Health Checks | 健康检查**: Built-in Spring Boot Actuator endpoints
 - **Metrics | 指标**: Custom metrics for business operations
 - **Alerts | 告警**: Configure alerts for critical system events
 
 ### Logging Configuration | 日志配置
+
 ```yaml
 logging:
   level:
@@ -807,6 +853,7 @@ logging:
 ## Contributing | 贡献指南
 
 **English:**
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -815,6 +862,7 @@ logging:
 6. Submit a pull request
 
 **中文:**
+
 1. Fork 仓库
 2. 创建功能分支
 3. 进行更改
@@ -832,12 +880,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **English:**
 For questions and support, please:
+
 - Check the [documentation](docs/)
 - Search existing [issues](issues)
 - Create a new issue if needed
 
 **中文:**
 如有问题和支持需求，请：
+
 - 查看[文档](docs/)
 - 搜索现有[问题](issues)
 - 如需要可创建新问题
@@ -845,6 +895,7 @@ For questions and support, please:
 ## Changelog | 更新日志
 
 ### Version 1.0.0 | 版本 1.0.0
+
 - Initial release with core functionality
 - 初始版本，包含核心功能
 - Dynamic CRUD operations | 动态CRUD操作
