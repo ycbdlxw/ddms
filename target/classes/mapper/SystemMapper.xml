@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycbd.demo.mapper.SystemMapper">
+<!--数据架构获取表名及备注名-->
+<select id="selectSchema" resultType="map">
+  SELECT
+    table_name as dbtable, table_comment as tableName,table_comment as pageTitle
+    FROM information_schema.tables WHERE table_schema =#{schema_name}
+</select>
+    <!-- 获取主键列名 -->
+    <select id="getPriKeyColumn" resultType="string">
+        SELECT name 
+        FROM column_attribute 
+        WHERE dbTableName = #{table} 
+        AND IsPri = 1 
+        LIMIT 1
+    </select>
+
+        <!-- 获取数据总数 -->
+    <select id="getDataCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) as total FROM ${table}
+         <if test="joinString != null and joinString != ''">
+            ${joinString}
+        </if>
+        <where>
+            <if test="whereString != null and whereString != ''">
+                ${whereString}
+            </if>
+        </where>
+    </select>
+
+
+     <!-- 获取列属性 -->
+    <select id="getColumnAttributes" resultType="Map">
+        SELECT 
+            name as prop,
+            pagename as label,
+            len,
+            showType AS type,         
+            options,
+            autoSelectId,
+            classcode,
+            pagename as placeholder 
+        FROM column_attribute 
+        WHERE dbTableName = #{table}
+        <if test="attributeType != null">
+            <choose>
+                <when test="attributeType == 'search'">
+                    AND IsPri = 0 AND searchFlag = 1
+                    ORDER BY searchOrderNo ASC
+                </when>
+                <when test="attributeType == 'edit'">
+                    AND editFlag = 1
+                    ORDER BY editOrderNo ASC
+                </when>
+                <when test="attributeType == 'list'">
+                    AND (IsShowInList = 1 OR IsPri = 1)
+                    ORDER BY OrderNo
+                </when>
+            </choose>
+        </if>
+    </select>
+
+    <!-- 获取表属性数据 -->
+    <select id="getAttributeData" resultType="java.util.Map">
+        SELECT * 
+        FROM table_attribute 
+        WHERE dbtable = #{table}
+    </select>
+
+    <!-- 通用查询(支持参数化) -->
+    <select id="getItemsData" resultType="java.util.Map">
+        SELECT ${columns} 
+        FROM ${table}
+        <if test="joinString != null and joinString != ''">
+            JOIN ${joinString}
+        </if>
+        <where>
+            <if test="whereStr != null and whereStr != ''">
+                <choose>
+                    <when test="params != null">
+                        ${whereStr}
+                    </when>
+                    <otherwise>
+                        ${whereStr}
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+        <if test="groupByString != null and groupByString != ''">
+            GROUP BY ${groupByString}
+        </if>
+        <if test="sortByAndType != null and sortByAndType != ''">
+            ORDER BY ${sortByAndType}
+        </if>
+        <if test="pageIndex >= 0">
+            LIMIT #{pageIndex}, #{pageSize}
+        </if>
+    </select>
+
+    <!-- 通用插入数据，并返回主键ID -->
+    <insert id="insertData" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="dataMap.id">
+        INSERT INTO ${table} (${columns})
+        VALUES
+        <foreach item="value" index="key" collection="dataMap" open="(" close=")" separator=",">
+            #{value}
+        </foreach>
+    </insert>
+         <!--批量新增表数据，返回受影响行数-->
+  <insert id="insertDataBath" parameterType="Map">
+        INSERT INTO `${table}` (${columns}) VALUES
+    <foreach collection="saveData" index="index" item="item" separator=",">
+      <foreach collection="item" index="key" item="value" open="(" close=")" separator=",">
+                 #{value}
+      </foreach>
+    </foreach>
+  </insert>
+    <!-- 通用更新，返回受影响行数 -->
+    <update id="updateData">
+        UPDATE ${table}
+        <set>
+            <foreach collection="dataMap" item="value" index="key" separator=",">
+                ${key} = #{value}
+            </foreach>
+        </set>
+        WHERE ${primaryKeyName} = #{id}
+    </update>
+
+    <!-- 通用删除，返回受影响行数 -->
+    <delete id="deleteData">
+        DELETE FROM ${table} 
+        WHERE ${primaryKeyName} = #{id}
+    </delete>
+
+
+     <!-- 其他特定查询... -->
+    <select id="getGroupColumn" resultType="String">
+     select GROUP_CONCAT(name) from FROM ${table}
+      <where>
+            <if test="whereStr != null and whereStr != ''">
+                ${whereStr}
+            </if>
+        </where>
+  </select>
+ <!-- 获取指定节点下的特殊树形结构数据 -->
+  <select id="getOrgIds" resultType="String">
+         (SELECT GROUP_CONCAT(DISTINCT child.org_id, ',') 
+        FROM organizations child 
+        WHERE child.parent_org_id = o.org_id) AS child_ids,
+       (SELECT GROUP_CONCAT(DISTINCT grandchild.org_id, ',') 
+        FROM organizations grandchild 
+        JOIN organizations parent ON grandchild.parent_org_id = parent.org_id 
+        WHERE parent.parent_org_id = o.org_id) AS grandchild_ids
+       FROM organizations o where o.org_id=#{org_id}
+  </select>
+
+  <!-- 获取指定结点下的标准树形结构数据 -->
+  <select id="getTreedata" resultType="String">
+         (SELECT GROUP_CONCAT(DISTINCT child.id, ',') 
+        FROM organizations child 
+        WHERE child.parent_id = o.id) AS child_ids,
+       (SELECT GROUP_CONCAT(DISTINCT grandchild.id, ',') 
+        FROM organizations grandchild 
+        JOIN organizations parent ON grandchild.parent_id = parent.id 
+        WHERE parent.parent_id = o.org_id) AS grandchild_ids
+       FROM organizations o where o.id=#{id}
+  </select>
+
+
+  <!-- 获取表属性数据 -->
+    <select id="findColumnCheckRules" resultType="java.util.Map">
+        SELECT * 
+        FROM column_check_property 
+        WHERE status=1 and check_table = #{table}
+    </select>
+
+    <!-- 统计指定列的记录数 -->
+    <select id="countByColumn" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(*) 
+        FROM ${table} 
+        <where>
+            <foreach collection="params" item="value" index="key" separator="AND">
+                ${key} = #{value}
+            </foreach>
+        </where>
+    </select>
+    <!-- 根据where条件统计记录数 -->
+    <select id="countByWhere" resultType="java.lang.Integer">
+        SELECT COUNT(*) 
+        FROM ${table}
+        <where>
+            <if test="whereString != null and whereString != ''">
+                ${whereString}
+            </if>
+        </where>
+    </select>
+</mapper>
